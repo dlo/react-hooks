@@ -4,10 +4,16 @@
 import * as React from 'react';
 
 const useLocalStorageState = (key, defaultValue) => {
-  const [state, setState] = React.useState(() => window.localStorage.getItem(key) || defaultValue);
+  const [state, setState] = React.useState(() => {
+    try {
+      return JSON.parse(window.localStorage.getItem(key)) || defaultValue;
+    } catch (e) {
+      window.localStorage.removeItem(key);
+    }
+  });
 
   React.useEffect(() => {
-    window.localStorage.setItem(key, state);
+    window.localStorage.setItem(key, JSON.stringify(state));
   }, [key, state]);
 
   return [state, setState];
