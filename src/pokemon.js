@@ -1,10 +1,13 @@
-import * as React from 'react'
-import {ErrorBoundary} from 'react-error-boundary'
+import * as React from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
 
-const formatDate = date =>
-  `${date.getHours()}:${String(date.getMinutes()).padStart(2, '0')} ${String(
-    date.getSeconds(),
-  ).padStart(2, '0')}.${String(date.getMilliseconds()).padStart(3, '0')}`
+const formatDate = (date) =>
+  `${date.getHours()}:${String(date.getMinutes()).padStart(
+    2,
+    '0',
+  )} ${String(date.getSeconds()).padStart(2, '0')}.${String(
+    date.getMilliseconds(),
+  ).padStart(3, '0')}`;
 
 // the delay argument is for faking things out a bit
 function fetchPokemon(name, delay = 1500) {
@@ -24,7 +27,7 @@ function fetchPokemon(name, delay = 1500) {
         }
       }
     }
-  `
+  `;
 
   return window
     .fetch('https://graphql-pokemon2.vercel.app/', {
@@ -36,50 +39,52 @@ function fetchPokemon(name, delay = 1500) {
       },
       body: JSON.stringify({
         query: pokemonQuery,
-        variables: {name: name.toLowerCase()},
+        variables: { name: name.toLowerCase() },
       }),
     })
-    .then(async response => {
-      const {data} = await response.json()
+    .then(async (response) => {
+      const { data } = await response.json();
       if (response.ok) {
-        const pokemon = data?.pokemon
+        const pokemon = data?.pokemon;
         if (pokemon) {
-          pokemon.fetchedAt = formatDate(new Date())
-          return pokemon
+          pokemon.fetchedAt = formatDate(new Date());
+          return pokemon;
         } else {
-          return Promise.reject(new Error(`No pokemon with the name "${name}"`))
+          return Promise.reject(
+            new Error(`No pokemon with the name "${name}"`),
+          );
         }
       } else {
         // handle the graphql errors
         const error = {
-          message: data?.errors?.map(e => e.message).join('\n'),
-        }
-        return Promise.reject(error)
+          message: data?.errors?.map((e) => e.message).join('\n'),
+        };
+        return Promise.reject(error);
       }
-    })
+    });
 }
 
-function PokemonInfoFallback({name}) {
-  const initialName = React.useRef(name).current
+function PokemonInfoFallback({ name }) {
+  const initialName = React.useRef(name).current;
   const fallbackPokemonData = {
     name: initialName,
     number: 'XXX',
     image: '/img/pokemon/fallback-pokemon.jpg',
     attacks: {
       special: [
-        {name: 'Loading Attack 1', type: 'Type', damage: 'XX'},
-        {name: 'Loading Attack 2', type: 'Type', damage: 'XX'},
+        { name: 'Loading Attack 1', type: 'Type', damage: 'XX' },
+        { name: 'Loading Attack 2', type: 'Type', damage: 'XX' },
       ],
     },
     fetchedAt: 'loading...',
-  }
-  return <PokemonDataView pokemon={fallbackPokemonData} />
+  };
+  return <PokemonDataView pokemon={fallbackPokemonData} />;
 }
 
-function PokemonDataView({pokemon}) {
+function PokemonDataView({ pokemon }) {
   return (
     <div>
-      <div className="pokemon-info__img-wrapper">
+      <div className='pokemon-info__img-wrapper'>
         <img src={pokemon.image} alt={pokemon.name} />
       </div>
       <section>
@@ -90,7 +95,7 @@ function PokemonDataView({pokemon}) {
       </section>
       <section>
         <ul>
-          {pokemon.attacks.special.map(attack => (
+          {pokemon.attacks.special.map((attack) => (
             <li key={attack.name}>
               <label>{attack.name}</label>:{' '}
               <span>
@@ -100,9 +105,11 @@ function PokemonDataView({pokemon}) {
           ))}
         </ul>
       </section>
-      <small className="pokemon-info__fetch-time">{pokemon.fetchedAt}</small>
+      <small className='pokemon-info__fetch-time'>
+        {pokemon.fetchedAt}
+      </small>
     </div>
-  )
+  );
 }
 
 function PokemonForm({
@@ -110,7 +117,9 @@ function PokemonForm({
   initialPokemonName = externalPokemonName || '',
   onSubmit,
 }) {
-  const [pokemonName, setPokemonName] = React.useState(initialPokemonName)
+  const [pokemonName, setPokemonName] = React.useState(
+    initialPokemonName,
+  );
 
   // this is generally not a great idea. We're synchronizing state when it is
   // normally better to derive it https://kentcdodds.com/blog/dont-sync-state-derive-it
@@ -120,82 +129,85 @@ function PokemonForm({
     // note that because it's a string value, if the externalPokemonName
     // is the same as the one we're managing, this will not trigger a re-render
     if (typeof externalPokemonName === 'string') {
-      setPokemonName(externalPokemonName)
+      setPokemonName(externalPokemonName);
     }
-  }, [externalPokemonName])
+  }, [externalPokemonName]);
 
   function handleChange(e) {
-    setPokemonName(e.target.value)
+    setPokemonName(e.target.value);
   }
 
   function handleSubmit(e) {
-    e.preventDefault()
-    onSubmit(pokemonName)
+    e.preventDefault();
+    onSubmit(pokemonName);
   }
 
   function handleSelect(newPokemonName) {
-    setPokemonName(newPokemonName)
-    onSubmit(newPokemonName)
+    setPokemonName(newPokemonName);
+    onSubmit(newPokemonName);
   }
 
   return (
-    <form onSubmit={handleSubmit} className="pokemon-form">
-      <label htmlFor="pokemonName-input">Pokemon Name</label>
+    <form onSubmit={handleSubmit} className='pokemon-form'>
+      <label htmlFor='pokemonName-input'>Pokemon Name</label>
       <small>
         Try{' '}
         <button
-          className="invisible-button"
-          type="button"
+          className='invisible-button'
+          type='button'
           onClick={() => handleSelect('pikachu')}
         >
+          {/* eslint-disable-next-line react/no-unescaped-entities */}
           "pikachu"
         </button>
         {', '}
         <button
-          className="invisible-button"
-          type="button"
+          className='invisible-button'
+          type='button'
           onClick={() => handleSelect('charizard')}
         >
+          {/* eslint-disable-next-line react/no-unescaped-entities */}
           "charizard"
         </button>
         {', or '}
         <button
-          className="invisible-button"
-          type="button"
+          className='invisible-button'
+          type='button'
           onClick={() => handleSelect('mew')}
         >
+          {/* eslint-disable-next-line react/no-unescaped-entities */}
           "mew"
         </button>
       </small>
       <div>
         <input
-          className="pokemonName-input"
-          id="pokemonName-input"
-          name="pokemonName"
-          placeholder="Pokemon Name..."
+          className='pokemonName-input'
+          id='pokemonName-input'
+          name='pokemonName'
+          placeholder='Pokemon Name...'
           value={pokemonName}
           onChange={handleChange}
         />
-        <button type="submit" disabled={!pokemonName.length}>
+        <button type='submit' disabled={!pokemonName.length}>
           Submit
         </button>
       </div>
     </form>
-  )
+  );
 }
 
-function ErrorFallback({error, resetErrorBoundary}) {
+function ErrorFallback({ error, resetErrorBoundary }) {
   return (
-    <div role="alert">
+    <div role='alert'>
       There was an error:{' '}
-      <pre style={{whiteSpace: 'normal'}}>{error.message}</pre>
+      <pre style={{ whiteSpace: 'normal' }}>{error.message}</pre>
       <button onClick={resetErrorBoundary}>Try again</button>
     </div>
-  )
+  );
 }
 
 function PokemonErrorBoundary(props) {
-  return <ErrorBoundary FallbackComponent={ErrorFallback} {...props} />
+  return <ErrorBoundary FallbackComponent={ErrorFallback} {...props} />;
 }
 
 export {
@@ -204,4 +216,4 @@ export {
   PokemonDataView,
   fetchPokemon,
   PokemonErrorBoundary,
-}
+};
