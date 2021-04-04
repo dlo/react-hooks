@@ -11,11 +11,51 @@ const resetSquare = () => {
   return null;
 };
 
+Storage.prototype.setObject = function (key: string, value: unknown) {
+  this.setItem(key, JSON.stringify(value));
+};
+
+Storage.prototype.getObject = function (key: string) {
+  const value = this.getItem(key);
+  if (!value) {
+    return null;
+  }
+
+  return JSON.parse(value);
+};
+
+declare global {
+  /* eslint-disable no-unused-vars */
+  interface Storage {
+    setObject: (key: string, value: unknown) => void;
+    getObject: (key: string) => unknown;
+  }
+  /* eslint-enable no-unused-vars */
+}
+
+const isArray = <T,>(value: unknown): value is Array<T> => {
+  return Array.isArray(value);
+};
+
 const Board = () => {
   // 🐨 squares is the state for this component. Add useState for squares
   const [squares, setSquares] = React.useState<List<Player | null>>(
-    List.of(new Array(9)).map(resetSquare),
+    () => {
+      const rawArray = localStorage.getObject('squares');
+      if (!isArray<Player | null>(rawArray)) {
+        return List(Array(9).fill(null)) as List<Player | null>;
+      }
+
+      rawArray.length = 9;
+      rawArray.fill(null, rawArray.length, 9);
+
+      return List(rawArray) as List<Player | null>;
+    },
   );
+
+  React.useEffect(() => {
+    localStorage.setObject('squares', squares);
+  }, [squares]);
 
   // 🐨 We'll need the following bits of derived state:
   // - nextValue ('X' or 'O')
@@ -103,7 +143,6 @@ const Game = () => (
   </div>
 );
 
-// eslint-disable-next-line no-unused-vars
 const calculateStatus = (
   winner: Player | null,
   squares: List<Player | null>,

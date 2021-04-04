@@ -4,7 +4,8 @@ import * as React from 'react';
 
 interface AnimalProps {
   name: string;
-  onAnimalChange: (animalName: string) => void;
+  // eslint-disable-next-line no-unused-vars
+  onAnimalChange: (arg0: string) => void;
 }
 
 interface DisplayProps {
