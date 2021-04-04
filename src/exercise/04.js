@@ -16,6 +16,7 @@ const Board = () => {
 
   // This is the function your square click handler will call. `square` should
   // be an index. So if they click the center square, this will be `4`.
+  // eslint-disable-next-line no-unused-vars
   const selectSquare = (square) => {
     // 🐨 first, if there's already winner or there's already a value at the
     // given square index (like someone clicked a square that's already been
