@@ -118,7 +118,7 @@ const calculateStatus = (
 };
 
 const calculateNextValue = (squares: List<Player | null>): Player => {
-  return squares.filter(Boolean).size % 2 == 0 ? 'O' : 'X';
+  return squares.filter(Boolean).size % 2 == 0 ? 'X' : 'O';
 };
 
 // eslint-disable-next-line no-unused-vars
