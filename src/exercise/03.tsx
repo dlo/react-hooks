@@ -1,12 +1,6 @@
 /* eslint-disable react/prop-types */
 
-import { ChangeEventHandler } from 'react';
 import * as React from 'react';
-
-interface NameProps {
-  name: string;
-  onNameChange: ChangeEventHandler<HTMLInputElement>;
-}
 
 interface AnimalProps {
   name: string;
@@ -14,16 +8,22 @@ interface AnimalProps {
 }
 
 interface DisplayProps {
-  name: string;
   animal: string;
 }
 
-const Name: React.FC<NameProps> = ({ name, onNameChange }) => (
-  <div>
-    <label htmlFor='name'>Name: </label>
-    <input id='name' value={name} onChange={onNameChange} />
-  </div>
-);
+const Name: React.FC<{}> = () => {
+  const [name, setName] = React.useState('');
+  return (
+    <div>
+      <label htmlFor='name'>Name: </label>
+      <input
+        id='name'
+        value={name}
+        onChange={(event) => setName(event.target.value)}
+      />
+    </div>
+  );
+};
 
 const FavoriteAnimal: React.FC<AnimalProps> = ({
   name,
@@ -41,26 +41,18 @@ const FavoriteAnimal: React.FC<AnimalProps> = ({
   );
 };
 
-// 🐨 uncomment this
-
-const Display: React.FC<DisplayProps> = ({ name, animal }) => {
-  return (
-    <div>{`Hey ${name}, your favorite animal is: ${animal}!`}</div>
-  );
+const Display: React.FC<DisplayProps> = ({ animal }) => {
+  return <div>{`Your favorite animal is: ${animal}!`}</div>;
 };
 
 const App = () => {
-  const [name, setName] = React.useState('');
   const [animal, setAnimal] = React.useState('');
 
   return (
     <form>
-      <Name
-        name={name}
-        onNameChange={(event) => setName(event.target.value)}
-      />
+      <Name />
       <FavoriteAnimal name={animal} onAnimalChange={setAnimal} />
-      <Display name={name} animal={animal} />
+      <Display animal={animal} />
     </form>
   );
 };
